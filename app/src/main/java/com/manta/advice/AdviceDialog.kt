@@ -15,6 +15,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.manta.advice.databinding.DialogAdviceBinding
@@ -77,7 +79,7 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding.dialog = this
         binding.lifecycleOwner = lifecycleOwner
         return binding.root
@@ -89,8 +91,8 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
 
         dialog?.window?.apply {
             setBackgroundDrawableResource(android.R.color.transparent)
-            attributes?.width = WindowManager.LayoutParams.MATCH_PARENT
-            attributes?.height = WindowManager.LayoutParams.WRAP_CONTENT
+//            attributes?.width = WindowManager.LayoutParams.WRAP_CONTENT
+//            attributes?.height = WindowManager.LayoutParams.WRAP_CONTENT
         }
 
 
@@ -202,25 +204,30 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
     }
 
     private fun createAdviceRequest(onReceiveAdvice: (advice: String, author: String?) -> Unit): List<AppRequest> {
+        val errorListener = Response.ErrorListener {
+            Toast.makeText(requireContext(), "서버 오류가 발생했습니다!", Toast.LENGTH_SHORT).show()
+        }
+
         val adviceRequest =
             StringRequest(Request.Method.GET, "https://api.adviceslip.com/advice", { adviceJson ->
                 val advice = JSONObject(adviceJson).getJSONObject("slip").getString("advice")
                 onReceiveAdvice(advice, null)
-            }, {})
+            }, errorListener)
 
-        val quoteRequest =
-            StringRequest(Request.Method.GET, "https://favqs.com/api/qotd", { quoteJson ->
-                val quote = JSONObject(quoteJson).getJSONObject("quote")
-                val advice = quote.getString("body")
-                val author = quote.getString("author")
-                onReceiveAdvice(advice, author)
-            }, {})
+        //페쇄된듯?
+//        val quoteRequest =
+//            StringRequest(Request.Method.GET, "https://favqs.com/api/qotd", { quoteJson ->
+//                val quote = JSONObject(quoteJson).getJSONObject("quote")
+//                val advice = quote.getString("body")
+//                val author = quote.getString("author")
+//                onReceiveAdvice(advice, author)
+//            }, {})
 
         val jokeRequest =
             object : StringRequest(Request.Method.GET, "https://icanhazdadjoke.com/", { jokeJson ->
                 val joke = JSONObject(jokeJson).getString("joke")
                 onReceiveAdvice(joke, null)
-            }, {}) {
+            }, errorListener) {
                 override fun getHeaders(): MutableMap<String, String> {
                     return mutableMapOf(
                         "Accept" to "application/json"
@@ -232,7 +239,7 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
             StringRequest(Request.Method.GET, "https://api.kanye.rest/", { quoteJson ->
                 val quote = JSONObject(quoteJson).getString("quote")
                 onReceiveAdvice(quote, "Kanye Omari West")
-            }, {})
+            }, errorListener)
 
         //서버가 좀 느림
         val quotRequest2 =
@@ -245,17 +252,18 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
                     val author = quote.getString("quoteAuthor")
                     onReceiveAdvice(advice, author)
                 },
-                {})
+                errorListener)
 
 
         return listOf(
             AppRequest("생활속 조언", adviceRequest),
-            AppRequest("명언", quoteRequest),
+            //AppRequest("명언", quoteRequest),
             AppRequest("아재 개그", jokeRequest),
             AppRequest("칸예 어록", kanyeRequest),
             AppRequest("명언2(느린서버)", quotRequest2)
         )
     }
+
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)

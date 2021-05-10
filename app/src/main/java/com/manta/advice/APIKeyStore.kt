@@ -2,12 +2,9 @@ package com.manta.advice
 
 object APIKeyStore {
 
-    init {
-        System.loadLibrary("native-lib")
-    }
 
-    external fun getNaverClientID(): String
-    external fun getNaverSecret(): String
+    fun getNaverClientID() = "OKjIt33KJCLGApgiznR1"
+    fun getNaverSecret() = "nIGxj2s40c"
 
 
 }

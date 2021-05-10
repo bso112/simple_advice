@@ -20,7 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:columnCount="2"
-        tools:background="?attr/colorPrimary">
+        android:useDefaultMargins="true"
+        tools:background="?attr/colorPrimary"
+        >
 
         <include
             layout="@layout/option_textview"
@@ -66,17 +68,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:apiName="@{requests[3].apiName}" />
-
-        <include
-            layout="@layout/option_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:request="@{requests[4]}" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:apiName="@{requests[4].apiName}" />
 
     </GridLayout>
 
