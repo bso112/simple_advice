@@ -1,25 +1,36 @@
 package com.manta.advice
 
-import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.DialogInterface
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.manta.advice.databinding.DialogAdviceBinding
 import org.json.JSONObject
 import kotlin.random.Random
 
+data class AppRequest(
+    val apiName: String,
+    val request: StringRequest
+) {
+    init {
+        request.setShouldCache(false)
+    }
+}
 
-class AdviceDialog(context: Context, private val lifecycleOwner: LifecycleOwner) : Dialog(context) {
+class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment() {
 
     val isConfigShow = MutableLiveData<Boolean>()
     val isLoading = MutableLiveData<Boolean>()
@@ -32,48 +43,56 @@ class AdviceDialog(context: Context, private val lifecycleOwner: LifecycleOwner)
         DialogAdviceBinding.inflate(layoutInflater)
     }
 
-    val requests: List<AppRequest> by CreateAdviceRequestDelegate { content, author ->
-        binding.progress.visibility = View.INVISIBLE
-        var contentWithAuthor = content
-        author?.let {
-            contentWithAuthor += "\n- $it"
-        }
-
-        binding.advice.text = contentWithAuthor
-
-        binding.card.setOnClickListener {
-            if (isConfigShow.value == true)
-                return@setOnClickListener
-
-            if (isAlreadyTranslated || getActiveRequests().isEmpty()) {
-                dismiss()
-                return@setOnClickListener
+    val requests: List<AppRequest> by lazy {
+        createAdviceRequest { content, author ->
+            binding.progress.visibility = View.INVISIBLE
+            var contentWithAuthor = content
+            author?.let {
+                contentWithAuthor += "\n- $it"
             }
 
-            isLoading.value = true
+            binding.advice.text = contentWithAuthor
 
-            requestTranslation(contentWithAuthor) { translated ->
-                isAlreadyTranslated = true
-                isLoading.value = false
-                binding.advice.text = translated
+            binding.card.setOnClickListener {
+                if (isConfigShow.value == true)
+                    return@setOnClickListener
+
+                if (isAlreadyTranslated || getActiveRequests().isEmpty()) {
+                    dismiss()
+                    return@setOnClickListener
+                }
+
+                isLoading.value = true
+
+                requestTranslation(contentWithAuthor) { translated ->
+                    isAlreadyTranslated = true
+                    isLoading.value = false
+                    binding.advice.text = translated
+                }
             }
         }
+    }
 
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding.dialog = this
+        binding.lifecycleOwner = lifecycleOwner
+        return binding.root
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding.dialog = this
-        binding.lifecycleOwner = lifecycleOwner
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        window?.setBackgroundDrawableResource(android.R.color.transparent);
-        window?.attributes?.width = WindowManager.LayoutParams.MATCH_PARENT
-        window?.attributes?.height = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog?.window?.apply {
+            setBackgroundDrawableResource(android.R.color.transparent)
+            attributes?.width = WindowManager.LayoutParams.MATCH_PARENT
+            attributes?.height = WindowManager.LayoutParams.WRAP_CONTENT
+        }
 
-       // val s = getNaverClientID()
 
         requestAdvice()
 
@@ -94,6 +113,12 @@ class AdviceDialog(context: Context, private val lifecycleOwner: LifecycleOwner)
             if (isRequestConfigChanged())
                 requestAdvice()
         }
+
+//        binding.btnSetting.setOnClickListener {
+//            Intent(requireActivity(), SettingActivity::class.java).apply{
+//                startActivity(this)
+//            }
+//        }
 
         isLoading.observe(lifecycleOwner) {
             if (it) {
@@ -120,13 +145,13 @@ class AdviceDialog(context: Context, private val lifecycleOwner: LifecycleOwner)
 
 
     private fun copyToClipboard(contentWithAuthor: String) {
-        val clipboardMgr = getSystemService(context, ClipboardManager::class.java)
+        val clipboardMgr = getSystemService(requireContext(), ClipboardManager::class.java)
         clipboardMgr?.setPrimaryClip(ClipData.newPlainText(null, contentWithAuthor))
-        Toast.makeText(context, "복사되었습니다.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "복사되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     private fun getActiveRequests() = requests.filter {
-        context.getSharedPreferences("api", MODE_PRIVATE).getBoolean(it.apiName, false)
+        requireContext().getSharedPreferences("api", MODE_PRIVATE).getBoolean(it.apiName, false)
     }
 
     private fun requestAdvice() {
@@ -176,5 +201,65 @@ class AdviceDialog(context: Context, private val lifecycleOwner: LifecycleOwner)
 
     }
 
+    private fun createAdviceRequest(onReceiveAdvice: (advice: String, author: String?) -> Unit): List<AppRequest> {
+        val adviceRequest =
+            StringRequest(Request.Method.GET, "https://api.adviceslip.com/advice", { adviceJson ->
+                val advice = JSONObject(adviceJson).getJSONObject("slip").getString("advice")
+                onReceiveAdvice(advice, null)
+            }, {})
+
+        val quoteRequest =
+            StringRequest(Request.Method.GET, "https://favqs.com/api/qotd", { quoteJson ->
+                val quote = JSONObject(quoteJson).getJSONObject("quote")
+                val advice = quote.getString("body")
+                val author = quote.getString("author")
+                onReceiveAdvice(advice, author)
+            }, {})
+
+        val jokeRequest =
+            object : StringRequest(Request.Method.GET, "https://icanhazdadjoke.com/", { jokeJson ->
+                val joke = JSONObject(jokeJson).getString("joke")
+                onReceiveAdvice(joke, null)
+            }, {}) {
+                override fun getHeaders(): MutableMap<String, String> {
+                    return mutableMapOf(
+                        "Accept" to "application/json"
+                    )
+                }
+            }
+
+        val kanyeRequest =
+            StringRequest(Request.Method.GET, "https://api.kanye.rest/", { quoteJson ->
+                val quote = JSONObject(quoteJson).getString("quote")
+                onReceiveAdvice(quote, "Kanye Omari West")
+            }, {})
+
+        //서버가 좀 느림
+        val quotRequest2 =
+            StringRequest(
+                Request.Method.GET,
+                "https://quote-garden.herokuapp.com/api/v3/quotes/random",
+                { quoteJson ->
+                    val quote = JSONObject(quoteJson).getJSONArray("data").getJSONObject(0)
+                    val advice = quote.getString("quoteText")
+                    val author = quote.getString("quoteAuthor")
+                    onReceiveAdvice(advice, author)
+                },
+                {})
+
+
+        return listOf(
+            AppRequest("생활속 조언", adviceRequest),
+            AppRequest("명언", quoteRequest),
+            AppRequest("아재 개그", jokeRequest),
+            AppRequest("칸예 어록", kanyeRequest),
+            AppRequest("명언2(느린서버)", quotRequest2)
+        )
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        (requireActivity() as DialogInterface.OnDismissListener).onDismiss(dialog)
+    }
 
 }

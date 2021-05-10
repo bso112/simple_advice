@@ -17,7 +17,8 @@
         android:fontFamily="@font/advicefont"
         android:text="@{request.apiName}"
         style="@style/TextAppearance.AppCompat.Medium"
-        tools:textColor="@color/white"
+        tools:textColor="?attr/colorOnPrimary"
+        tools:background="?attr/colorPrimary"
         tools:text="생활 속 조언" />
 </layout>
 

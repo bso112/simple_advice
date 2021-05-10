@@ -34,6 +34,7 @@
                 android:layout_gravity="center"
                 android:duration="1"
                 android:visibility="@{dialog.isLoading() ? View.VISIBLE : View.GONE}"
+                tools:visibility="gone"
                 android:fromDegrees="0"
                 android:toDegrees="1080" />
 
@@ -47,6 +48,7 @@
                 android:minWidth="200dp"
                 android:padding="25dp"
                 android:visibility="@{dialog.isConfigShow() ? View.GONE : View.VISIBLE}"
+                tools:visibility="gone"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 tools:text="너 자신을 알라"
@@ -54,13 +56,12 @@
 
             <LinearLayout
                 android:id="@+id/api_switches"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_margin="20dp"
                 android:visibility="@{dialog.isConfigShow() ? View.VISIBLE : View.GONE}"
                 android:orientation="vertical"
-                tools:visibility="gone"
-                android:padding="10dp">
+                tools:visibility="visible">
 
                 <ImageView
                     android:id="@+id/btn_back"
@@ -71,6 +72,8 @@
 
                 <include
                     layout="@layout/app_option"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:requests ="@{dialog.requests}"/>
 
 

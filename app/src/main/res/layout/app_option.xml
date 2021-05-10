@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-        <import type="java.util.List"/>
-        <import type="com.manta.advice.AppRequest"/>
-        <variable name="requests" type="List&lt;AppRequest>"/>
+
+        <import type="java.util.List" />
+
+        <import type="com.manta.advice.AppRequest" />
+
+        <variable
+            name="requests"
+            type="List&lt;AppRequest>" />
     </data>
 
+
     <GridLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:background="@color/black"
-        android:columnCount="2">
+        android:columnCount="2"
+        tools:background="?attr/colorPrimary">
 
         <include
+            layout="@layout/option_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            layout="@layout/option_textview"
-            app:request="@{requests[0]}"/>
+            app:request="@{requests[0]}" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:layout_width="wrap_content"
@@ -28,11 +34,10 @@
             app:apiName="@{requests[0].apiName}" />
 
         <include
+            layout="@layout/option_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            layout="@layout/option_textview"
-            app:request="@{requests[1]}"/>
+            app:request="@{requests[1]}" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:layout_width="wrap_content"
@@ -41,11 +46,10 @@
 
 
         <include
+            layout="@layout/option_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            layout="@layout/option_textview"
-            app:request="@{requests[2]}"/>
+            app:request="@{requests[2]}" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:layout_width="wrap_content"
@@ -53,11 +57,10 @@
             app:apiName="@{requests[2].apiName}" />
 
         <include
+            layout="@layout/option_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            layout="@layout/option_textview"
-            app:request="@{requests[3]}"/>
+            app:request="@{requests[3]}" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:layout_width="wrap_content"
@@ -65,11 +68,10 @@
             app:apiName="@{requests[3].apiName}" />
 
         <include
+            layout="@layout/option_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            layout="@layout/option_textview"
-            app:request="@{requests[4]}"/>
+            app:request="@{requests[4]}" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:layout_width="wrap_content"
@@ -77,5 +79,6 @@
             app:apiName="@{requests[4].apiName}" />
 
     </GridLayout>
+
 
 </layout>
