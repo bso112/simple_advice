@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.MODE_PRIVATE
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +33,7 @@ data class AppRequest(
     }
 }
 
-class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment() {
+class AdviceDialog() : DialogFragment() {
 
     val isConfigShow = MutableLiveData<Boolean>()
     val isLoading = MutableLiveData<Boolean>()
@@ -81,7 +82,7 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
         savedInstanceState: Bundle?
     ): View {
         binding.dialog = this
-        binding.lifecycleOwner = lifecycleOwner
+        binding.lifecycleOwner = requireActivity()
         return binding.root
     }
 
@@ -114,19 +115,19 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
                 requestAdvice()
         }
 
-//        binding.btnSetting.setOnClickListener {
-//            Intent(requireActivity(), SettingActivity::class.java).apply{
-//                startActivity(this)
-//            }
-//        }
+        binding.btnSetting.setOnClickListener {
+            Intent(requireActivity(), SettingActivity::class.java).apply{
+                startActivity(this)
+            }
+        }
 
-        isLoading.observe(lifecycleOwner) {
+        isLoading.observe(requireActivity()) {
             if (it) {
                 binding.advice.text = ""
             }
         }
 
-        isConfigShow.observe(lifecycleOwner) {
+        isConfigShow.observe(requireActivity()) {
             if (it) {
                 //이전설정 저장
                 oldActiveRequest = getActiveRequests()
@@ -138,7 +139,7 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
     private fun isRequestConfigChanged(): Boolean {
         getActiveRequests().run {
             if (size != oldActiveRequest.size) return true
-            forEachIndexed { i, e -> if (e.apiName != oldActiveRequest[i].apiName) return@isRequestConfigChanged true }
+            forEachIndexed { i, request -> if (request.apiName != oldActiveRequest[i].apiName) return@isRequestConfigChanged true }
         }
         return false
     }
