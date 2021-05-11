@@ -91,8 +91,6 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
 
         dialog?.window?.apply {
             setBackgroundDrawableResource(android.R.color.transparent)
-//            attributes?.width = WindowManager.LayoutParams.WRAP_CONTENT
-//            attributes?.height = WindowManager.LayoutParams.WRAP_CONTENT
         }
 
 

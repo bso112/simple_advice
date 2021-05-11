@@ -6,7 +6,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="dialog"
             type="com.manta.advice.AdviceDialog" />
@@ -22,7 +24,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginHorizontal="50dp"
             app:cardBackgroundColor="?attr/colorPrimary"
             app:cardCornerRadius="50dp">
 
@@ -36,45 +37,64 @@
                 android:fromDegrees="0"
                 android:toDegrees="1080"
                 android:visibility="@{dialog.isLoading() ? View.VISIBLE : View.GONE}"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/advice"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="25dp"
                 android:fontFamily="@font/advicefont"
                 android:gravity="center"
                 android:minWidth="200dp"
-                android:layout_margin="25dp"
                 android:textAlignment="center"
                 android:textColor="?attr/colorOnPrimary"
                 android:visibility="@{dialog.isConfigShow() ? View.GONE : View.VISIBLE}"
                 tools:text="너 자신을 알라"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/api_switches"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:orientation="vertical"
                 android:visibility="@{dialog.isConfigShow() ? View.VISIBLE : View.GONE}"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
-                <ImageView
-                    android:id="@+id/btn_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:src="@drawable/ic_baseline_backspace_24"
-                    app:tint="?attr/colorOnPrimary" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/btn_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/ic_baseline_backspace_24"
+                        app:tint="?attr/colorOnPrimary" />
+
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/ic_baseline_settings_24" />
+
+                </RelativeLayout>
+
 
                 <include
                     layout="@layout/app_option"
-                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
                     app:requests="@{dialog.requests}" />
 
 
