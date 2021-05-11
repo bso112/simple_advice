@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.MODE_PRIVATE
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -116,11 +117,11 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
                 requestAdvice()
         }
 
-//        binding.btnSetting.setOnClickListener {
-//            Intent(requireActivity(), SettingActivity::class.java).apply{
-//                startActivity(this)
-//            }
-//        }
+        binding.btnSetting.setOnClickListener {
+            Intent(requireActivity(), SettingActivity::class.java).apply{
+                startActivity(this)
+            }
+        }
 
         isLoading.observe(lifecycleOwner) {
             if (it) {
@@ -140,7 +141,7 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
     private fun isRequestConfigChanged(): Boolean {
         getActiveRequests().run {
             if (size != oldActiveRequest.size) return true
-            forEachIndexed { i, e -> if (e.apiName != oldActiveRequest[i].apiName) return@isRequestConfigChanged true }
+            forEachIndexed { i, request -> if (request.apiName != oldActiveRequest[i].apiName) return@isRequestConfigChanged true }
         }
         return false
     }
