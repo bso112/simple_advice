@@ -33,7 +33,7 @@ data class AppRequest(
     }
 }
 
-class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment() {
+class AdviceDialog() : DialogFragment() {
 
     val isConfigShow = MutableLiveData<Boolean>()
     val isLoading = MutableLiveData<Boolean>()
@@ -82,7 +82,7 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
         savedInstanceState: Bundle?
     ): View {
         binding.dialog = this
-        binding.lifecycleOwner = lifecycleOwner
+        binding.lifecycleOwner = requireActivity()
         return binding.root
     }
 
@@ -123,13 +123,13 @@ class AdviceDialog(private val lifecycleOwner: LifecycleOwner) : DialogFragment(
             }
         }
 
-        isLoading.observe(lifecycleOwner) {
+        isLoading.observe(requireActivity()) {
             if (it) {
                 binding.advice.text = ""
             }
         }
 
-        isConfigShow.observe(lifecycleOwner) {
+        isConfigShow.observe(requireActivity()) {
             if (it) {
                 //이전설정 저장
                 oldActiveRequest = getActiveRequests()

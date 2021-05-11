@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.orange)
         super.onCreate(savedInstanceState)
-        AdviceDialog( this).show(supportFragmentManager, "")
+        AdviceDialog().show(supportFragmentManager, "")
 
     }
 
