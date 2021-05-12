@@ -1,4 +1,4 @@
-package com.manta.advice
+package com.manta.advice.ui
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -9,29 +9,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.*
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.manta.advice.AppRequest
 import com.manta.advice.databinding.DialogAdviceBinding
+import com.manta.advice.utill.APIKeyStore
 import org.json.JSONObject
 import kotlin.random.Random
 
-data class AppRequest(
-    val apiName: String,
-    val request: StringRequest
-) {
-    init {
-        request.setShouldCache(false)
-    }
-}
 
 class AdviceDialog() : DialogFragment() {
 
@@ -134,6 +125,7 @@ class AdviceDialog() : DialogFragment() {
             }
         }
     }
+
 
 
     private fun isRequestConfigChanged(): Boolean {

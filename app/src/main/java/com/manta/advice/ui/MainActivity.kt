@@ -1,17 +1,21 @@
-package com.manta.advice
+package com.manta.advice.ui
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.manta.advice.loadTheme
 
 class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.orange)
+        loadTheme()
         super.onCreate(savedInstanceState)
-        AdviceDialog().show(supportFragmentManager, "")
-
+       // AdviceDialog().show(supportFragmentManager, "")
+        Intent(this, SettingActivity::class.java).apply {
+            startActivity(this)
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface?) {

@@ -1,4 +1,4 @@
-package com.manta.advice
+package com.manta.advice.utill
 
 object APIKeyStore {
 

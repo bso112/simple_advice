@@ -1,4 +1,4 @@
-package com.manta.advice
+package com.manta.advice.binding
 
 import android.content.Context.MODE_PRIVATE
 import androidx.appcompat.widget.SwitchCompat

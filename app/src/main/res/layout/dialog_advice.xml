@@ -11,7 +11,7 @@
 
         <variable
             name="dialog"
-            type="com.manta.advice.AdviceDialog" />
+            type="com.manta.advice.ui.AdviceDialog" />
 
     </data>
 
