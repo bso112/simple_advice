@@ -106,11 +106,6 @@ class AdviceDialog() : DialogFragment() {
                 requestAdvice()
         }
 
-        binding.btnSetting.setOnClickListener {
-            Intent(requireActivity(), SettingActivity::class.java).apply{
-                startActivity(this)
-            }
-        }
 
         isLoading.observe(requireActivity()) {
             if (it) {

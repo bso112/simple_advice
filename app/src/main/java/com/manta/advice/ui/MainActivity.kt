@@ -10,12 +10,9 @@ class MainActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        loadTheme()
         super.onCreate(savedInstanceState)
-       // AdviceDialog().show(supportFragmentManager, "")
-        Intent(this, SettingActivity::class.java).apply {
-            startActivity(this)
-        }
+       AdviceDialog().show(supportFragmentManager, "")
+
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
